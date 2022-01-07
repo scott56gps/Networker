@@ -15,7 +15,7 @@ public enum HTTPMethod: String {
     case delete = "DELETE"
 }
 
-public protocol Request {
+public protocol Requestable {
     var path: String { get }
     var method: HTTPMethod { get }
     var contentType: String { get }
@@ -24,7 +24,7 @@ public protocol Request {
     associatedtype ResultType: Codable
 }
 
-extension Request {
+extension Requestable {
     var method: HTTPMethod { return .get }
     var contentType: String { return "application/json" }
     var queryParams: [String : String]? { return nil }
@@ -32,7 +32,7 @@ extension Request {
     var headers: [String : String]? { return nil }
 }
 
-extension Request {
+extension Requestable {
     private func requestBodyFrom(params: [String : Any]?) -> Data? {
         guard let params = params else { return nil }
         guard let httpBody = try? JSONSerialization.data(withJSONObject: params, options: []) else {
