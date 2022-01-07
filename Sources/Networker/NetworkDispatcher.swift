@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-struct NetworkDispatcher {
+public struct NetworkDispatcher {
     let urlSession: URLSession
     
     public init(urlSession: URLSession = .shared) {
@@ -58,7 +58,7 @@ extension NetworkDispatcher {
     }
 }
 
-enum NetworkRequestError: LocalizedError, Equatable {
+public enum NetworkRequestError: LocalizedError, Equatable {
     case invalidRequest
     case badRequest
     case unauthorized

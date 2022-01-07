@@ -4,13 +4,13 @@ public struct Networker {
     var baseURL: String
     var networkDispatcher: NetworkDispatcher
     
-    init(baseURL: String, networkDispatcher: NetworkDispatcher = NetworkDispatcher()) {
+    public init(baseURL: String, networkDispatcher: NetworkDispatcher = NetworkDispatcher()) {
         self.baseURL = baseURL
         self.networkDispatcher = networkDispatcher
     }
     
     @available(macOS 10.15, *)
-    func dispatch<R: Requestable>(_ request: R) -> AnyPublisher<R.ResultType, NetworkRequestError> {
+    public func dispatch<R: Requestable>(_ request: R) -> AnyPublisher<R.ResultType, NetworkRequestError> {
         guard let urlRequest = request.asURLRequest(baseURL: baseURL) else {
             return Fail(outputType: R.ResultType.self, failure: NetworkRequestError.badRequest).eraseToAnyPublisher()
         }
