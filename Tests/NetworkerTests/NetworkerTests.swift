@@ -6,6 +6,6 @@ final class NetworkerTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(Networker().text, "Hello, World!")
+        XCTAssertEqual(Networker().decirHola(), "Hola, Swift!")
     }
 }

@@ -1,6 +1,9 @@
 public struct Networker {
-    public private(set) var text = "Hello, World!"
-
-    public init() {
+    var baseURL: String
+    var networkDispatcher: NetworkDispatcher
+    
+    init(baseURL: String, networkDispatcher: NetworkDispatcher = NetworkDispatcher()) {
+        self.baseURL = baseURL
+        self.networkDispatcher = networkDispatcher
     }
 }
