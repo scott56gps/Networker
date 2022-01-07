@@ -10,6 +10,7 @@ public struct Networker {
     }
     
     @available(macOS 10.15, *)
+    @available(iOS 13.0, *)
     public func dispatch<R: Requestable>(_ request: R) -> AnyPublisher<R.ResultType, NetworkRequestError> {
         guard let urlRequest = request.asURLRequest(baseURL: baseURL) else {
             return Fail(outputType: R.ResultType.self, failure: NetworkRequestError.badRequest).eraseToAnyPublisher()

@@ -16,6 +16,7 @@ public struct NetworkDispatcher {
     }
     
     @available(macOS 10.15, *)
+    @available(iOS 13.0, *)
     func dispatch<ResultType: Codable>(request: URLRequest) -> AnyPublisher<ResultType, NetworkRequestError> {
         return urlSession.dataTaskPublisher(for: request)
             .tryMap { data, response in
