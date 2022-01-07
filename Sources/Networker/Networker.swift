@@ -1,4 +1,5 @@
 import Combine
+
 public struct Networker {
     var baseURL: String
     var networkDispatcher: NetworkDispatcher
