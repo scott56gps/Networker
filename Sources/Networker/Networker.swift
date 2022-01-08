@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 
 public struct Networker {
     var baseURL: String
@@ -18,6 +19,18 @@ public struct Networker {
         
         typealias RequestPublisher = AnyPublisher<R.ResultType, NetworkRequestError>
         let requestPublisher: RequestPublisher = networkDispatcher.dispatch(request: urlRequest)
+        return requestPublisher.eraseToAnyPublisher()
+    }
+    
+    @available(macOS 10.15, *)
+    @available(iOS 13.0, *)
+    public func dispatchForFile<R: Requestable>(_ request: R) -> AnyPublisher<URL, NetworkRequestError> {
+        guard let urlRequest = request.asURLRequest(baseURL: baseURL) else {
+             return Fail(outputType: URL.self, failure: NetworkRequestError.badRequest).eraseToAnyPublisher()
+        }
+        
+        typealias RequestPublisher = AnyPublisher<URL, NetworkRequestError>
+        let requestPublisher: RequestPublisher = networkDispatcher.dispatchForFile(request: urlRequest)
         return requestPublisher.eraseToAnyPublisher()
     }
 }
