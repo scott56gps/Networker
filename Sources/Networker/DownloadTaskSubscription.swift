@@ -10,6 +10,7 @@ import Combine
 
 extension URLSession {
     @available(macOS 10.15, *)
+    @available(iOS 13.0, *)
     final class DownloadTaskSubscription<SubscriberType: Subscriber>: Subscription where
     SubscriberType.Input == (url: URL, response: URLResponse),
     SubscriberType.Failure == URLError {
@@ -24,6 +25,8 @@ extension URLSession {
             self.request = request
         }
         
+        @available(macOS 10.15, *)
+        @available(iOS 13.0, *)
         func request(_ demand: Subscribers.Demand) {
             guard demand > 0 else {
                 return
@@ -63,7 +66,5 @@ extension URLSession {
         func cancel() {
             self.task.cancel()
         }
-        
-        
     }
 }
