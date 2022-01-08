@@ -7,7 +7,6 @@
 
 import Foundation
 import Combine
-import CoreData
 
 public struct NetworkDispatcher {
     let urlSession: URLSession

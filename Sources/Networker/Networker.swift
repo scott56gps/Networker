@@ -1,5 +1,5 @@
-import Combine
 import Foundation
+import Combine
 
 public struct Networker {
     var baseURL: String
