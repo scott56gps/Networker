@@ -25,6 +25,7 @@ extension URLSession {
         public let session: URLSession
         
         @available(macOS 10.15, *)
+        @available(iOS 13.0, *)
         public func receive<S>(subscriber: S) where S : Subscriber, DownloadTaskPublisher.Failure == S.Failure, DownloadTaskPublisher.Output == S.Input {
             let subscription = DownloadTaskSubscription(subscriber: subscriber, session: self.session, request: self.request)
             subscriber.receive(subscription: subscription)
