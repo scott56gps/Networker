@@ -38,13 +38,8 @@ public struct NetworkDispatcher {
     @available(iOS 13.0, *)
     func dispatchForFile(request: URLRequest) -> AnyPublisher<URL, NetworkRequestError> {
         return urlSession.downloadTaskPublisher(for: request)
-            .tryMap { data, response in
-                if let response = response as? HTTPURLResponse,
-                   !(200...299).contains(response.statusCode) {
-                    throw httpErrorFromStatusCode(response.statusCode)
-                }
-                
-                return data
+            .map { url, error in
+                return url
             }
             .mapError { error in
                 handleError(error)
