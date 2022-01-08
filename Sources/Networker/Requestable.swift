@@ -42,14 +42,18 @@ extension Requestable {
     }
     
     func asURLRequest(baseURL: String) -> URLRequest? {
-        guard var urlComponents = URLComponents(string: baseURL) else { return nil }
-        urlComponents.path = "\(urlComponents.path)\(path)"
-        guard let fullUrl = urlComponents.url else { return nil }
-        
+        guard let fullUrl = baseURL.isEmpty ? URL(string: path) : constructUrlFromComponent(baseURL: baseURL) else { return nil }
+                
         var request = URLRequest(url: fullUrl)
         request.httpMethod = method.rawValue
         request.httpBody = requestBodyFrom(params: body)
         request.allHTTPHeaderFields = headers
         return request
+    }
+    
+    private func constructUrlFromComponent(baseURL: String) -> URL? {
+        guard var urlComponents = URLComponents(string: baseURL) else { return nil }
+        urlComponents.path = "\(urlComponents.path)\(path)"
+        return urlComponents.url
     }
 }
