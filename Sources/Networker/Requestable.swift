@@ -34,6 +34,17 @@ extension Requestable {
 }
 
 extension Requestable {
+    func asURLRequest(baseURL: String) -> URLRequest? {
+        if baseURL.isEmpty { return nil }
+        
+        guard let url = constructUrl(baseURL: baseURL) else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+        request.httpBody = requestBodyFrom(params: body)
+        request.allHTTPHeaderFields = headers
+        return request
+    }
+    
     private func requestBodyFrom(params: [String : Any]?) -> Data? {
         guard let params = params else { return nil }
         guard let httpBody = try? JSONSerialization.data(withJSONObject: params, options: []) else {
@@ -42,19 +53,13 @@ extension Requestable {
         return httpBody
     }
     
-    func asURLRequest(baseURL: String) -> URLRequest? {
-        guard let fullUrl = baseURL.isEmpty ? URL(string: path) : constructUrlFromComponent(baseURL: baseURL) else { return nil }
-                
-        var request = URLRequest(url: fullUrl)
-        request.httpMethod = method.rawValue
-        request.httpBody = requestBodyFrom(params: body)
-        request.allHTTPHeaderFields = headers
-        return request
-    }
-    
-    private func constructUrlFromComponent(baseURL: String) -> URL? {
+    private func constructUrl(baseURL: String) -> URL? {
         guard var urlComponents = URLComponents(string: baseURL) else { return nil }
-        urlComponents.path = "\(urlComponents.path)\(path)"
+        guard let pathComponent = URLComponents(string: path) else { return nil }
+        urlComponents.path.append(pathComponent.path)
+        if let queryParams = queryParams {
+            urlComponents.queryItems = queryParams.map { URLQueryItem(name: $0.key, value: $0.value) }
+        }
         return urlComponents.url
     }
 }
