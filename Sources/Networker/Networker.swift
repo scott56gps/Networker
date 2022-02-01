@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 public struct Networker {
-    var baseURL: String
+    public var baseURL: String
     var networkDispatcher: NetworkDispatcher
     
     public init(baseURL: String, networkDispatcher: NetworkDispatcher = NetworkDispatcher()) {
