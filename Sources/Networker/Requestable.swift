@@ -20,6 +20,7 @@ public protocol Requestable {
     var method: HTTPMethod { get }
     var contentType: String { get }
     var body: [String : Any]? { get }
+    var queryParams: [String : String]? { get }
     var headers: [String : String]? { get }
     associatedtype ResultType: Codable
 }
