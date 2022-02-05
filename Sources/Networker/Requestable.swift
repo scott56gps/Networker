@@ -25,7 +25,7 @@ public protocol Requestable {
     associatedtype ResultType: Codable
 }
 
-extension Requestable {
+public extension Requestable {
     var method: HTTPMethod { return .get }
     var contentType: String { return "application/json" }
     var queryParams: [String : String]? { return nil }
