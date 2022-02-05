@@ -57,9 +57,7 @@ extension Requestable {
         guard var urlComponents = URLComponents(string: baseURL) else { return nil }
         guard let pathComponent = URLComponents(string: path) else { return nil }
         urlComponents.path.append(pathComponent.path)
-        if let queryParams = queryParams {
-            urlComponents.queryItems = queryParams.map { URLQueryItem(name: $0.key, value: $0.value) }
-        }
+        urlComponents.queryItems = queryParams?.map { URLQueryItem(name: $0.key, value: $0.value) }
         return urlComponents.url
     }
 }

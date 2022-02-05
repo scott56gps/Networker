@@ -17,6 +17,14 @@ final class RequestableTests: XCTestCase {
         XCTAssertNotNil(urlRequest)
     }
     
+    func testWithQueryParams_NonNilUrlRequest() {
+        let queryParams = ["my_key" : "is cool"]
+        testRequestable.queryParams = queryParams
+        let urlRequest = testRequestable.asURLRequest(baseURL: testBaseUrl)
+        XCTAssertNotNil(urlRequest)
+
+    }
+    
     func testEmptyBaseUrl_NilUrlRequest() {
         let urlRequest = testRequestable.asURLRequest(baseURL: "")
         XCTAssertNil(urlRequest)
@@ -24,20 +32,21 @@ final class RequestableTests: XCTestCase {
     
     func testRequestablePathIsFullUrl_NilUrlRequest() {
         let fullUrl = "https://www.google.com/hello"
-        testRequestable = TestRequest(path: fullUrl)
+        testRequestable.path = fullUrl
         let urlRequest = testRequestable.asURLRequest(baseURL: testBaseUrl)
         XCTAssertNil(urlRequest)
     }
     
     func testPathEmpty_NonNilUrlRequest() {
-        testRequestable = TestRequest(path: "")
+        let emptyPath = ""
+        testRequestable.path = emptyPath
         let urlRequest = testRequestable.asURLRequest(baseURL: testBaseUrl)
         XCTAssertNotNil(urlRequest)
     }
     
     func testPathNoPrefixSlash_NonNilUrlRequest() {
-        let testPath = "hello"
-        testRequestable = TestRequest(path: testPath)
+        let pathWithNoPrefixSlash = "hello"
+        testRequestable.path = pathWithNoPrefixSlash
         let urlRequest = testRequestable.asURLRequest(baseURL: testBaseUrl)
         XCTAssertNotNil(urlRequest)
     }
@@ -46,4 +55,10 @@ final class RequestableTests: XCTestCase {
 struct TestRequest: Requestable {
     typealias ResultType = String
     var path: String
+    var queryParams: [String : String]?
+    
+    init(path: String, queryParams: [String : String]? = nil) {
+        self.path = path
+        self.queryParams = queryParams
+    }
 }
