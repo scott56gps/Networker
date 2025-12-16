@@ -17,6 +17,23 @@ public struct NetworkDispatcher {
     
     @available(macOS 10.15, *)
     @available(iOS 13.0, *)
+    func dispatch<T>(request: URLRequest, transform: @escaping (Data) throws -> T) -> AnyPublisher<T, NetworkRequestError> {
+        return urlSession.dataTaskPublisher(for: request)
+            .tryMap { data, response in
+                if let response = response as? HTTPURLResponse,
+                   !(200...299).contains(response.statusCode) {
+                    throw httpErrorFromStatusCode(response.statusCode)
+                }
+                return try transform(data)
+            }
+            .mapError { error in
+                handleError(error)
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    @available(macOS 10.15, *)
+    @available(iOS 13.0, *)
     func dispatch<ResultType: Codable>(request: URLRequest) -> AnyPublisher<ResultType, NetworkRequestError> {
         return urlSession.dataTaskPublisher(for: request)
             .tryMap { data, response in

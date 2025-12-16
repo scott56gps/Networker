@@ -10,6 +10,16 @@ public struct Networker {
         self.networkDispatcher = networkDispatcher
     }
     
+    @available(iOS 13.0, *)
+    public func request<T>(_ request: URLRequest, transform: @escaping (Data) throws -> T) -> AnyPublisher<T, NetworkRequestError> {
+        return networkDispatcher.dispatch(request: request, transform: transform)
+    }
+    
+    @available(iOS 13.0, *)
+    public func request(request: URLRequest) -> AnyPublisher<Void, NetworkRequestError> {
+        return networkDispatcher.dispatch(request: request) { _ in () }
+    }
+    
     @available(macOS 10.15, *)
     @available(iOS 13.0, *)
     public func dispatch<R: Requestable>(_ request: R) -> AnyPublisher<R.ResultType, NetworkRequestError> {
