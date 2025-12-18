@@ -2,12 +2,18 @@ import Foundation
 import Combine
 
 public struct Networker {
-    public var baseURL: String
+    public var baseURL: URL
     var networkDispatcher: NetworkDispatcher
     
     public init(baseURL: String, networkDispatcher: NetworkDispatcher = NetworkDispatcher()) {
-        self.baseURL = baseURL
+        self.baseURL = URL(string: baseURL)!
         self.networkDispatcher = networkDispatcher
+    }
+    
+    @available(iOS 16.0, *)
+    func request<T: RequestConvertible>(_ request: T) -> AnyPublisher<T.Response, NetworkRequestError> {
+        let urlRequest = toUrlRequest(request)
+        return networkDispatcher.dispatch(request: urlRequest, transform: request.transform)
     }
     
     @available(iOS 13.0, *)
@@ -16,31 +22,21 @@ public struct Networker {
     }
     
     @available(iOS 13.0, *)
-    public func request(request: URLRequest) -> AnyPublisher<Void, NetworkRequestError> {
+    public func request(_ request: URLRequest) -> AnyPublisher<Void, NetworkRequestError> {
         return networkDispatcher.dispatch(request: request) { _ in () }
     }
     
-    @available(macOS 10.15, *)
-    @available(iOS 13.0, *)
-    public func dispatch<R: Requestable>(_ request: R) -> AnyPublisher<R.ResultType, NetworkRequestError> {
-        guard let urlRequest = request.asURLRequest(baseURL: baseURL) else {
-            return Fail(outputType: R.ResultType.self, failure: NetworkRequestError.badRequest).eraseToAnyPublisher()
-        }
+    @available(iOS 16.0, *)
+    private func toUrlRequest<T: RequestConvertible>(_ request: T) -> URLRequest {
+        let url = request.queryParameters.map { queryParams in
+            baseURL.appending(path: request.path).appending(queryItems: queryParams)
+        } ?? baseURL.appending(path: request.path)
         
-        typealias RequestPublisher = AnyPublisher<R.ResultType, NetworkRequestError>
-        let requestPublisher: RequestPublisher = networkDispatcher.dispatch(request: urlRequest)
-        return requestPublisher.eraseToAnyPublisher()
-    }
-    
-    @available(macOS 10.15, *)
-    @available(iOS 13.0, *)
-    public func dispatchForFile<R: Requestable>(_ request: R) -> AnyPublisher<URL, NetworkRequestError> {
-        guard let urlRequest = request.asURLRequest(baseURL: baseURL) else {
-             return Fail(outputType: URL.self, failure: NetworkRequestError.badRequest).eraseToAnyPublisher()
-        }
+        var urlRequest = URLRequest(url: url, cachePolicy: request.cachePolicy)
+        urlRequest.httpMethod = request.method.rawValue
+        urlRequest.httpBody = request.body
+        urlRequest.allHTTPHeaderFields = request.headers
         
-        typealias RequestPublisher = AnyPublisher<URL, NetworkRequestError>
-        let requestPublisher: RequestPublisher = networkDispatcher.dispatchForFile(request: urlRequest)
-        return requestPublisher.eraseToAnyPublisher()
+        return urlRequest
     }
 }
