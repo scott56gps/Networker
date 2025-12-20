@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-public struct NetworkDispatcher {
+public struct APIClient: Dispatcher {
     let urlSession: URLSession
     
     public init(urlSession: URLSession = .shared) {
@@ -65,7 +65,7 @@ public struct NetworkDispatcher {
     }
 }
 
-extension NetworkDispatcher {
+extension APIClient {
     private func httpErrorFromStatusCode(_ statusCode: Int) -> NetworkRequestError {
         switch statusCode {
         case 400: return .badRequest
