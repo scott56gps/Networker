@@ -8,6 +8,7 @@ import Foundation
 
 public enum NetworkRequestError: LocalizedError, Equatable {
     case invalidRequest
+    case invalidResponse
     case badRequest
     case unauthorized
     case forbidden

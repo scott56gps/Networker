@@ -7,7 +7,7 @@
 import Foundation
 import Combine
 
-protocol DataTaskPublisher {
+public protocol DataTaskPublisher {
     @available(iOS 13.0, *)
-    func execute(request: URLRequest) -> AnyPublisher<(Data, HTTPURLResponse), NetworkRequestError>
+    func execute(_ request: URLRequest) -> AnyPublisher<(Data, HTTPURLResponse), NetworkRequestError>
 }
