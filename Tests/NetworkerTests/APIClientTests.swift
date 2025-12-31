@@ -100,4 +100,27 @@ final class APIClientTests: XCTestCase {
         
         wait(for: [networkOperationFinished], timeout: 1)
     }
+    
+    func testDispatch_NetworkError_CannotConnect() {
+        let mockPublisher = MockDataPublisher(result: .failure(NetworkRequestError.urlSessionFailed(URLError(.cannotConnectToHost))))
+        let apiClient = APIClient(dataPublisher: mockPublisher)
+        
+        let networkOperationFailedWithCannotConnectToHostError = expectation(description: "The requested operation finished with the correct error")
+        
+        apiClient.dispatch(request: request, transform: { _ in
+            return ()
+        })
+        .sink(receiveCompletion: { completion in
+            switch completion {
+            case .finished:
+                XCTFail("Operation should not have finished successfully")
+            case .failure(let error):
+                XCTAssertTrue(error == .urlSessionFailed(URLError(.cannotConnectToHost)))
+                networkOperationFailedWithCannotConnectToHostError.fulfill()
+            }
+        }, receiveValue: { _ in })
+        .store(in: &cancellables)
+        
+        wait(for: [networkOperationFailedWithCannotConnectToHostError], timeout: 1)
+    }
 }
