@@ -19,6 +19,7 @@ final class APIClientTests: XCTestCase {
             headerFields: nil
         )!
     }
+    var request = URLRequest(url: URL(string: "https://example.com")!)
     private var cancellables: Set<AnyCancellable> = []
 
     
@@ -28,7 +29,6 @@ final class APIClientTests: XCTestCase {
         let mockPublisher = MockDataPublisher(
             result: .success((MockData.json(from: movie), successfulResponse))
         )
-        let request = URLRequest(url: URL(string: "https://example.com")!)
         let apiClient = APIClient(dataPublisher: mockPublisher)
         
         let allPropertiesMatchExpectation = expectation(description: "Returned value has properties matching the original")
@@ -57,7 +57,6 @@ final class APIClientTests: XCTestCase {
         let mockPublisher = MockDataPublisher(
             result: .success((MockData.json(from: movies), successfulResponse))
         )
-        let request = URLRequest(url: URL(string: "https://example.com")!)
         let apiClient = APIClient(dataPublisher: mockPublisher)
         
         let returnedValueHasCountMatchingExpectation = expectation(description: "The returned value is an array matching the length of the original")
@@ -77,5 +76,28 @@ final class APIClientTests: XCTestCase {
         .store(in: &cancellables)
         
         wait(for: [returnedValueHasCountMatchingExpectation, allPropertiesForEachMatchExpectation], timeout: 1)
+    }
+    
+    func testDispatch_VoidTransformValue() {
+        let mockPublisher = MockDataPublisher(result: .success((Data(), successfulResponse)))
+        let apiClient = APIClient(dataPublisher: mockPublisher)
+        
+        let networkOperationFinished = expectation(description: "The requested operation finished with no errors")
+        
+        apiClient.dispatch(request: request, transform: { _ in
+            return ()
+        })
+        // We are testing for side-effects here.  The best we can do is verify that the completion "finished"
+        .sink(receiveCompletion: { completion in
+            switch completion {
+            case .finished:
+                networkOperationFinished.fulfill()
+            case .failure(let error):
+                XCTFail("Unexpected error: \(error)")
+            }
+        }, receiveValue: { _ in })
+        .store(in: &cancellables)
+        
+        wait(for: [networkOperationFinished], timeout: 1)
     }
 }
