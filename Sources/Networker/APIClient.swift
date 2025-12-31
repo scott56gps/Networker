@@ -8,13 +8,15 @@
 import Foundation
 import Combine
 
-public struct APIClient: Dispatcher {
+public struct APIClient {
     let urlSession: URLSession
     
     public init(urlSession: URLSession = .shared) {
         self.urlSession = urlSession
     }
-    
+}
+
+extension APIClient: Dispatcher {
     @available(macOS 10.15, *)
     @available(iOS 13.0, *)
     func dispatch<T>(request: URLRequest, transform: @escaping (Data) throws -> T) -> AnyPublisher<T, NetworkRequestError> {
@@ -25,38 +27,6 @@ public struct APIClient: Dispatcher {
                     throw httpErrorFromStatusCode(response.statusCode)
                 }
                 return try transform(data)
-            }
-            .mapError { error in
-                handleError(error)
-            }
-            .eraseToAnyPublisher()
-    }
-    
-    @available(macOS 10.15, *)
-    @available(iOS 13.0, *)
-    func dispatch<ResultType: Codable>(request: URLRequest) -> AnyPublisher<ResultType, NetworkRequestError> {
-        return urlSession.dataTaskPublisher(for: request)
-            .tryMap { data, response in
-                if let response = response as? HTTPURLResponse,
-                   !(200...299).contains(response.statusCode) {
-                    throw httpErrorFromStatusCode(response.statusCode)
-                }
-                
-                return data
-            }
-            .decode(type: ResultType.self, decoder: JSONDecoder())
-            .mapError { error in
-                handleError(error)
-            }
-            .eraseToAnyPublisher()
-    }
-    
-    @available(macOS 10.15, *)
-    @available(iOS 13.0, *)
-    func dispatchForFile(request: URLRequest) -> AnyPublisher<URL, NetworkRequestError> {
-        return urlSession.downloadTaskPublisher(for: request)
-            .map { url, error in
-                return url
             }
             .mapError { error in
                 handleError(error)
@@ -87,18 +57,4 @@ extension APIClient {
         default: return .unknownError
         }
     }
-}
-
-public enum NetworkRequestError: LocalizedError, Equatable {
-    case invalidRequest
-    case badRequest
-    case unauthorized
-    case forbidden
-    case notFound
-    case error4xx(_ code: Int)
-    case serverError
-    case error5xx(_ code: Int)
-    case decodingError
-    case urlSessionFailed(_ error: URLError)
-    case unknownError
 }
