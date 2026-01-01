@@ -6,7 +6,7 @@
 //
 import Foundation
 
-protocol RequestConvertible {
+public protocol RequestConvertible {
     associatedtype Response
     var path: String { get }
     var method: HTTPMethod { get }
