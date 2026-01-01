@@ -16,7 +16,7 @@ public struct Networker {
     }
     
     @available(iOS 16.0, *)
-    func request<T: RequestConvertible>(_ request: T) -> AnyPublisher<T.Response, NetworkRequestError> {
+    public func request<T: RequestConvertible>(_ request: T) -> AnyPublisher<T.Response, NetworkRequestError> {
         let urlRequest = toUrlRequest(request)
         return client.dispatch(request: urlRequest, transform: request.transform)
     }
