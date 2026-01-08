@@ -7,16 +7,17 @@
 import Foundation
 
 public enum NetworkRequestError: LocalizedError, Equatable {
+    case badRequest
+    case decodingError
+    case encodingError
+    case error4xx(_ code: Int)
+    case error5xx(_ code: Int)
+    case forbidden
     case invalidRequest
     case invalidResponse
-    case badRequest
-    case unauthorized
-    case forbidden
     case notFound
-    case error4xx(_ code: Int)
     case serverError
-    case error5xx(_ code: Int)
-    case decodingError
-    case urlSessionFailed(_ error: URLError)
+    case unauthorized
     case unknownError
+    case urlSessionFailed(_ error: URLError)
 }
