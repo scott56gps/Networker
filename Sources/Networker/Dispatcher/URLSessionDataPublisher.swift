@@ -46,7 +46,7 @@ extension URLSessionDataPublisher {
     
     private func handleError(_ error: Error) -> NetworkRequestError {
         switch error {
-        case is Swift.DecodingError: return .decodingError
+        case is Swift.DecodingError: return .decodingError(error.localizedDescription)
         case let urlError as URLError: return .urlSessionFailed(urlError)
         case let error as NetworkRequestError: return error
         default: return .unknownError

@@ -19,10 +19,4 @@ public extension JSONBodyRequest {
     func encodeBody() throws -> Data {
         try JSONEncoder().encode(body)
     }
-    
-    var headers: [String: String] {
-        var headers = self.headers
-        headers["Content-Type"] = self.contentType
-        return headers
-    }
 }
