@@ -22,8 +22,8 @@ public struct Networker {
             return client
                 .dispatch(request: urlRequest, transform: request.transform)
    
-        } catch {
-            return Fail(error: NetworkRequestError.encodingError)
+        } catch(let error) {
+            return Fail(error: NetworkRequestError.encodingError(error.localizedDescription))
                 .eraseToAnyPublisher()
         }
     }
@@ -53,7 +53,7 @@ public struct Networker {
             headers["Content-Type"] = bodyProvidingRequest.contentType
             urlRequest.httpBody = try bodyProvidingRequest.encodeBody()
         }
-        urlRequest.allHTTPHeaderFields = request.headers
+        urlRequest.allHTTPHeaderFields = headers
         
         return urlRequest
     }

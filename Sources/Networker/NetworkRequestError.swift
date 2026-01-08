@@ -8,8 +8,8 @@ import Foundation
 
 public enum NetworkRequestError: LocalizedError, Equatable {
     case badRequest
-    case decodingError
-    case encodingError
+    case decodingError(_ errorDescription: String?)
+    case encodingError(_ errorDescription: String?)
     case error4xx(_ code: Int)
     case error5xx(_ code: Int)
     case forbidden
