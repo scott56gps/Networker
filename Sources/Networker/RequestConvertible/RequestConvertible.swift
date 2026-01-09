@@ -12,7 +12,6 @@ public protocol RequestConvertible {
     var method: HTTPMethod { get }
     var headers: [String: String] { get }
     var queryParameters: [URLQueryItem]? { get }
-    var body: Data? { get }
     var cachePolicy: URLRequest.CachePolicy { get }
     
     func transform(_ data: Data) throws -> Response
@@ -22,7 +21,6 @@ public extension RequestConvertible {
     var method: HTTPMethod { .get }
     var headers: [String: String] { [:] }
     var queryParameters: [URLQueryItem]? { nil }
-    var body: Data? { nil }
     var cachePolicy: URLRequest.CachePolicy { .useProtocolCachePolicy }
 }
 
