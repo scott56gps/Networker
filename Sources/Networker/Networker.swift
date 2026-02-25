@@ -5,13 +5,13 @@ public struct Networker {
     public var baseURL: URL
     var client: Dispatcher
     
-    public init(baseURL: String, client: APIClient = APIClient()) {
-        self.baseURL = URL(string: baseURL)!
+    public init(baseURL: URL, client: APIClient = APIClient()) {
+        self.baseURL = baseURL
         self.client = client
     }
     
-    init(baseURL: String, client: Dispatcher) {
-        self.baseURL = URL(string: baseURL)!
+    init(baseURL: URL, client: Dispatcher) {
+        self.baseURL = baseURL
         self.client = client
     }
     
